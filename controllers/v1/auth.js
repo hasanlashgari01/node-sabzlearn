@@ -1,29 +1,29 @@
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const userModel = require('../../models/user');
+const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
+const userModel = require('../../models/user')
 
-const registerValidator = require('../../validators/register');
+const registerValidator = require('../../validators/register')
 
 exports.register = async (req, res, next) => {
-    const validationResults = registerValidator(req.body);
+    const validationResults = registerValidator(req.body)
 
     if (validationResults !== true) {
-        return res.status(422).json(validationResults);
+        return res.status(422).json(validationResults)
     }
 
-    const {username, name, email, password, phone} = req.body;
+    const { username, name, email, password, phone } = req.body
 
-    const isUserExist = await userModel.findOne({$or: [{username}, {email}]});
+    const isUserExist = await userModel.findOne({ $or: [{ username }, { email }] })
 
     if (isUserExist) {
         return res.status(409).json({
-            message: 'User already exists'
-        });
+            message: 'User already exists',
+        })
     }
 
-    const countOfUsers = await userModel.count();
+    const countOfUsers = await userModel.count()
 
-    const hashedPassword = await bcrypt.hash(password, 12);
+    const hashedPassword = await bcrypt.hash(password, 12)
 
     const user = await userModel.create({
         username,
@@ -31,19 +31,19 @@ exports.register = async (req, res, next) => {
         email,
         password: hashedPassword,
         phone,
-        role: countOfUsers === 0 ? 'ADMIN' : 'USER'
-    });
+        role: countOfUsers === 0 ? 'ADMIN' : 'USER',
+    })
 
-    const userObject = user.toObject();
-    Reflect.deleteProperty(userObject, 'password');
+    const userObject = user.toObject()
+    Reflect.deleteProperty(userObject, 'password')
 
-    const accessToken = jwt.sign({id: user._id}, process.env.JWT_SECRET, {expiresIn: '30 days'});
+    const accessToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '30 days' })
 
-    return res.status(201).json({user: userObject, accessToken});
-};
+    return res.status(201).json({ user: userObject, accessToken })
+}
 
 exports.login = async (req, res, next) => {
-};
+}
 
 exports.getMe = async (req, res, next) => {
-};
+}
