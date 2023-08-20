@@ -53,6 +53,27 @@ exports.register = async (req, res, next) => {
 }
 
 exports.login = async (req, res, next) => {
+    const { identifier, password } = req.body
+
+    const user = await userModel.findOne({ $or: [{ username: identifier }, { email: identifier }] })
+
+    if (!user) {
+        return res.status(401).json({
+            message: 'User not found',
+        })
+    }
+
+    const isPasswordCorrect = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordCorrect) {
+        return res.status(401).json({
+            message: 'Incorrect password',
+        })
+    }
+
+    const accessToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '30 days' })
+
+    return res.status(200).json({ accessToken })
 }
 
 exports.getMe = async (req, res, next) => {
