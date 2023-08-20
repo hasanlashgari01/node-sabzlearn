@@ -1,8 +1,10 @@
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const userModel = require('../../models/user')
+const banUserModel = require('../../models/ban-phone')
 
 const registerValidator = require('../../validators/register')
+const { banUser } = require('./user')
 
 exports.register = async (req, res, next) => {
     const validationResults = registerValidator(req.body)
@@ -18,6 +20,14 @@ exports.register = async (req, res, next) => {
     if (isUserExist) {
         return res.status(409).json({
             message: 'User already exists',
+        })
+    }
+
+    const isUserBan = await banUserModel.find({ phone })
+
+    if (isUserBan.length) {
+        return res.status(409).json({
+            message: 'User is banned',
         })
     }
 
