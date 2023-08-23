@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const { isValidObjectId } = require('mongoose')
+const bcrypt = require('bcrypt')
 const UserModel = require('../../models/user')
 const banUserModel = require('../../models/ban-phone')
 
@@ -44,7 +45,7 @@ exports.removeUser = async (req, res) => {
 
 exports.changeRole = async (req, res) => {
     const { id } = req.body
-    const isValidUserID = isValidObjectId(id);
+    const isValidUserID = isValidObjectId(id)
 
     if (!isValidUserID) {
         return res.status(409).json({ message: 'Invalid user ID' })
@@ -61,5 +62,19 @@ exports.changeRole = async (req, res) => {
     }
 
     return res.status(404).json({ message: 'User not found' })
+}
 
+exports.updateUser = async (req, res) => {
+    const { name, username, email, password, phone } = req.body
+
+    const hashedPassword = await bcrypt.hash(password, 12)
+
+    const user = await UserModel.findOneAndUpdate({ _id: req.user._id }, {
+        name, username, email, password: hashedPassword, phone,
+    })
+
+    const userObject = user.toObject()
+    Reflect.deleteProperty(userObject, 'password')
+
+    return res.json(userObject)
 }
