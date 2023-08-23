@@ -15,7 +15,7 @@ exports.banUser = async (req, res) => {
 }
 
 exports.getAllUsers = async (req, res) => {
-    const users = await UserModel.find({}).lean()
+    const users = await UserModel.find({}, "-password" ).lean()
 
     if (users) {
         return res.status(200).json(users)
