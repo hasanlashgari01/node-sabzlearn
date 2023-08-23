@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const { isValidObjectId } = require('mongoose')
 const UserModel = require('../../models/user')
 const banUserModel = require('../../models/ban-phone')
 
@@ -32,7 +33,7 @@ exports.removeUser = async (req, res) => {
         return res.status(409).json({ message: 'Invalid user ID' })
     }
 
-    const removedUser = await UserModel.findOneAndRemove({ _id: req.params.id }).lean();
+    const removedUser = await UserModel.findOneAndRemove({ _id: req.params.id }).lean()
 
     if (!removedUser) {
         return res.status(404).json({ message: 'User not found' })
@@ -41,3 +42,24 @@ exports.removeUser = async (req, res) => {
     return res.status(200).json({ message: 'User has been removed' })
 }
 
+exports.changeRole = async (req, res) => {
+    const { id } = req.body
+    const isValidUserID = isValidObjectId(id);
+
+    if (!isValidUserID) {
+        return res.status(409).json({ message: 'Invalid user ID' })
+    }
+
+    const user = await UserModel.findOne({ _id: id })
+
+    let newRole = user.role === 'ADMIN' ? 'USER' : 'ADMIN'
+
+    const updatedUser = await UserModel.findByIdAndUpdate({ _id: id }, { role: newRole })
+
+    if (updatedUser) {
+        return res.status(200).json({ message: 'User role has been changed' })
+    }
+
+    return res.status(404).json({ message: 'User not found' })
+
+}
