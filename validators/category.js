@@ -4,7 +4,7 @@ const v = new Validator()
 
 const schema = {
     name: { type: 'string', min: 3, max: 255 },
-    href: { type: 'string', min: 3, max: 255 },
+    href: { type: 'string', min: 3, max: 255, unique: true },
 }
 
 const check = v.compile(schema)
