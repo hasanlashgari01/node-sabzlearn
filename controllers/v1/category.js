@@ -24,6 +24,15 @@ exports.create = async (req, res) => {
 }
 
 exports.getAll = async (req, res) => {
+    const categories = await CategoryModel.find()
+
+    if (!categories) {
+        return res.status(404).json({
+            message: 'Categories not found',
+        })
+    }
+
+    res.status(200).json(categories)
 }
 
 exports.delete = async (req, res) => {
