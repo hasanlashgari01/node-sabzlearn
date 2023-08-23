@@ -13,3 +13,14 @@ exports.banUser = async (req, res) => {
 
     return res.status(500).json({ message: 'Something went wrong' })
 }
+
+exports.getAllUsers = async (req, res) => {
+    const users = await UserModel.find({}).lean()
+
+    if (users) {
+        return res.status(200).json(users)
+    }
+
+    return res.status(500).json({ message: 'Something went wrong' })
+}
+
