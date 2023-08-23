@@ -4,6 +4,7 @@ const schema = new mongoose.Schema({
     username: {
         type: String,
         required: true,
+        unique: true
     },
     name: {
         type: String,
@@ -21,6 +22,7 @@ const schema = new mongoose.Schema({
     phone: {
         type: String,
         required: true,
+        unique: true
     },
     role: {
         type: String,
