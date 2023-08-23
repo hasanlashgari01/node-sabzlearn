@@ -61,4 +61,32 @@ exports.delete = async (req, res) => {
 }
 
 exports.update = async (req, res) => {
+    const { id } = req.params
+    const isValidID = mongoose.Types.ObjectId.isValid(id)
+
+    if (!isValidID) {
+        return res.status(409).json({
+            message: 'Invalid id',
+        })
+    }
+
+    const validationResults = categoryValidator(req.body)
+
+    if (validationResults !== true) {
+        return res.status(409).json(validationResults)
+    }
+
+    const { name, href } = req.body
+
+    const category = await CategoryModel.findOneAndUpdate({ _id: id }, { name, href })
+
+    if (!category) {
+        return res.status(404).json({
+            message: 'Category not found',
+        })
+    }
+
+    res.status(200).json({
+        message: 'Category updated',
+    })
 }
