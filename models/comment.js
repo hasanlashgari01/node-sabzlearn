@@ -28,7 +28,7 @@ const schema = new mongoose.Schema({
         required: true,
         default: 0,
     },
-    mainComment: {
+    mainCommentID: {
         type: mongoose.Types.ObjectId,
         ref: 'Comment',
     },
