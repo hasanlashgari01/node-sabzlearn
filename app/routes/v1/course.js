@@ -8,13 +8,13 @@ const isAdminMiddleware = require('../../middlewares/isAdmin');
 const router = express.Router();
 
 router
-  .route('/')
-  .post(
-    multer({ storage: multerStorage, limits: { fileSize: 1000000 } }).single('cover'),
-    authMiddleware,
-    isAdminMiddleware,
-    courseController.create
-  );
+    .route('/')
+    .post(
+        multer({ storage: multerStorage, limits: { fileSize: 1000000 } }).single('cover'),
+        authMiddleware,
+        isAdminMiddleware,
+        courseController.create
+    );
 
 router.route('/popular').get(courseController.getPopular);
 router.route('/presell').get(courseController.getPresell);
@@ -26,15 +26,17 @@ router.route('/:href/:sessionID').get(courseController.getSessionInfo);
 router.route('/:id/register').post(authMiddleware, courseController.register);
 
 router
-  .route('/:id/sessions')
-  .post(
-    multer({ storage: multerStorage, limits: { fileSize: 1000000000 } }).single('video'),
-    authMiddleware,
-    isAdminMiddleware,
-    courseController.createSession
-  );
+    .route('/:id/sessions')
+    .post(
+        multer({ storage: multerStorage, limits: { fileSize: 1000000000 } }).single('video'),
+        authMiddleware,
+        isAdminMiddleware,
+        courseController.createSession
+    );
 
 router.route('/sessions').get(authMiddleware, isAdminMiddleware, courseController.getAllSessions);
-router.route('/sessions/:id').delete(authMiddleware, isAdminMiddleware, courseController.removeSession);
+router
+    .route('/sessions/:id')
+    .delete(authMiddleware, isAdminMiddleware, courseController.removeSession);
 
 module.exports = router;

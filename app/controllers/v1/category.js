@@ -1,7 +1,6 @@
+const mongoose = require('mongoose')
 const CategoryModel = require('../../models/category')
 const categoryValidator = require('../../validators/category')
-const { isValidObjectId } = require('mongoose')
-const mongoose = require('mongoose')
 
 exports.create = async (req, res) => {
     const validationResults = categoryValidator(req.body)

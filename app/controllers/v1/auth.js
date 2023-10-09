@@ -4,7 +4,6 @@ const userModel = require('../../models/user')
 const banUserModel = require('../../models/ban-phone')
 
 const registerValidator = require('../../validators/register')
-const { banUser } = require('./user')
 
 exports.register = async (req, res, next) => {
     const validationResults = registerValidator(req.body)
